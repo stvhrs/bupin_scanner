@@ -41,6 +41,7 @@ dependencies:
   youtube_player_flutter: ^8.1.2
   youtube_player_iframe: ^4.0.4
   http: ^1.2.0
+  webview_flutter: ^4.4.4
  
 
 dev_dependencies:
@@ -68,7 +69,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - asset/
-    - asset/Bottom_Navigation/
+   
     - asset/Halaman_HET/
     - asset/Halaman_Latihan_PAS&PTS/
     - asset/Halaman_Scan/

@@ -10,11 +10,41 @@ class PlayPauseButtonBar extends StatelessWidget {
   final ValueNotifier<bool> _isMuted = ValueNotifier(false);
   @override
   Widget build(BuildContext context) {
-    return
-        IconButton(
-          icon: const Icon(Icons.fullscreen_rounded),
-          onPressed:(){ context.ytController.enterFullScreen();},
-        );
-       
+    return InkWell(
+      onTap: () {
+        context.ytController.enterFullScreen();
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Spacer(),
+          Container(
+            padding: EdgeInsets.only(right: 5, left: 10),
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10)),
+            child: Row(
+              children: [
+                Text(
+                  "Fullscreen",
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w700),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Icon(
+                    Icons.fullscreen_rounded,
+                    weight: 20,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

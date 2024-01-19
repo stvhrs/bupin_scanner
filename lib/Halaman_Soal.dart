@@ -1,16 +1,35 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-class HalmanSoal extends StatefulWidget {
-  const HalmanSoal({super.key});
+class HalamanSoal extends StatefulWidget {
+  const HalamanSoal({super.key});
 
   @override
-  State<HalmanSoal> createState() => _HalmanSoalState();
+  State<HalamanSoal> createState() => _HalamanSoalState();
 }
 
-class _HalmanSoalState extends State<HalmanSoal> {
+class _HalamanSoalState extends State<HalamanSoal> {
+  late final WebViewController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = WebViewController()
+      ..loadRequest(
+        Uri.parse('https://myanimelist.net/anime/21/One_Piece'),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('WebView Bank Soal'),
+      ),
+      body: WebViewWidget(
+        controller: controller,
+      ),
+    );
   }
 }

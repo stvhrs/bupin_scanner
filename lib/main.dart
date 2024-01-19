@@ -1,3 +1,4 @@
+import 'package:Bupin/Halaman_Video.dart';
 import 'package:Bupin/Home.dart';
 
 import 'package:flutter/material.dart';
@@ -20,5 +21,5 @@ void main() async {
           colorScheme: ColorScheme.fromSwatch().copyWith(
               secondary: Color.fromRGBO(236, 180, 84, 1),
               primary: Color.fromRGBO(70, 89, 166, 1))),
-      home: Home()));
+      home: HalamanVideo()));
 }

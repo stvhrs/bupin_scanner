@@ -149,7 +149,7 @@ class _HalmanHetState extends State<HalmanHet> {
                     ),
                     DropdownButton<String>(
                       value: dropdownValue,
-                      dropdownColor: Colors.grey.shade300,
+                      dropdownColor: Colors.white,
                       iconEnabledColor: Color.fromARGB(255, 66, 66, 66),
                       icon: const Icon(
                         Icons.arrow_downward_rounded,
@@ -201,7 +201,7 @@ class _HalmanHetState extends State<HalmanHet> {
                   child: Container(
                     color: Colors.white,
                     child: GridView.builder(
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.only(top: 20),
                       itemCount: listHET.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           mainAxisSpacing: 0,
