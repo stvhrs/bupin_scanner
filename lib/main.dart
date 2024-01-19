@@ -13,7 +13,7 @@ void main() async {
   return runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
-      theme: ThemeData(
+      theme: ThemeData(appBarTheme: AppBarTheme(actionsIconTheme: IconThemeData(color: Colors.white)),
 
           fontFamily: 'Nunito',
           textTheme: TextTheme(titleMedium: TextStyle(fontFamily: "Nunito")),
@@ -21,5 +21,5 @@ void main() async {
           colorScheme: ColorScheme.fromSwatch().copyWith(
               secondary: Color.fromRGBO(236, 180, 84, 1),
               primary: Color.fromRGBO(70, 89, 166, 1))),
-      home: HalamanVideo()));
+      home: Home()));
 }

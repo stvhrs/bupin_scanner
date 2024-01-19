@@ -1,22 +1,31 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:Bupin/Halaman_Soal.dart';
 import 'package:Bupin/Halaman_Video.dart';
+import 'package:Bupin/models/Video.dart';
+import 'package:Bupin/styles/PageTransitionTheme.dart';
 import 'package:Bupin/widgets/scann_aniamtion/scanning_effect.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
+import "" as http;
 
 class QRViewExample extends StatefulWidget {
-  const QRViewExample({Key? key}) : super(key: key);
+  final bool scanned;
+  const QRViewExample(
+    this.scanned,
+  );
 
   @override
   State<StatefulWidget> createState() => _QRViewExampleState();
 }
 
 class _QRViewExampleState extends State<QRViewExample> {
+  bool scanned = false;
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -33,6 +42,20 @@ class _QRViewExampleState extends State<QRViewExample> {
   }
 
   @override
+  void initState() {
+    log("qr scan scanned");
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    scanned = widget.scanned;
+    log("didchangedependencies");
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     log("Build");
     return Scaffold(
@@ -45,12 +68,10 @@ class _QRViewExampleState extends State<QRViewExample> {
                 children: [
                   _buildQrView(context),
                   SizedBox(
-                    width: (MediaQuery.of(context).size.width < 400 ||
-                            MediaQuery.of(context).size.height < 400)
+                    width: (MediaQuery.of(context).size.height < 400)
                         ? MediaQuery.of(context).size.width / 1.7
                         : MediaQuery.of(context).size.width / 1.7,
-                    height: (MediaQuery.of(context).size.width < 400 ||
-                            MediaQuery.of(context).size.height < 400)
+                    height: (MediaQuery.of(context).size.height < 400)
                         ? MediaQuery.of(context).size.width / 1.7
                         : MediaQuery.of(context).size.width / 1.7,
                     child: ScanningEffect(
@@ -148,10 +169,11 @@ class _QRViewExampleState extends State<QRViewExample> {
     );
   }
 
+  push() async {}
+
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
-    var scanArea = (MediaQuery.of(context).size.width < 400 ||
-            MediaQuery.of(context).size.height < 400)
+    var scanArea = (MediaQuery.of(context).size.height < 400)
         ? MediaQuery.of(context).size.width / 2
         : MediaQuery.of(context).size.width / 2;
     // To ensure the Scanner view is properly sizes after rotation
@@ -175,13 +197,19 @@ class _QRViewExampleState extends State<QRViewExample> {
     });
     controller.resumeCamera();
     controller.scannedDataStream.listen((scanData) async {
-      setState(() {
-        result = scanData;
-      });
-      // var data = "data video";
-      controller.pauseCamera();
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => HalamanVideo()));
+      result = scanData;
+      if (scanned == false) {
+        if (scanData.code!.contains("VID")) {
+          scanned = true;
+          setState(() {});
+          final response = await http.get(Uri.parse(scanData.code!));
+
+          scanned = await Navigator.of(context).push(CustomRoute(
+            builder: (context) => HalamanVideo(
+               Video.fromMap( jsonDecode(response.body)[0])),
+          ));
+        }
+      }
     });
   }
 
@@ -197,6 +225,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   @override
   void dispose() {
     controller?.dispose();
+    scanned = false;
     super.dispose();
   }
 }

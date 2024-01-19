@@ -62,26 +62,27 @@ class _HomeState extends State<Home> {
                           ));
                         },
                         child: Card(
+                            surfaceTintColor: Color.fromRGBO(205, 32, 49, 1),
                             child: Row(children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(
-                                "asset/Halaman_Latihan_PAS&PTS/Icon SD@4x.png",
-                                width: 40),
-                          ),
-                          Spacer(),
-                          Text(
-                            "SD/MI",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: Color.fromRGBO(205, 32, 49, 1),
-                                fontSize: 18),
-                          ),
-                          Spacer(),
-                          Spacer(),
-                        ])),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Image.asset(
+                                    "asset/Halaman_Latihan_PAS&PTS/Icon SD@4x.png",
+                                    width: 40),
+                              ),
+                              Spacer(),
+                              Text(
+                                "SD/MI",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromRGBO(205, 32, 49, 1),
+                                    fontSize: 18),
+                              ),
+                              Spacer(),
+                              Spacer(),
+                            ])),
                       ),
-                      Card(
+                      Card(surfaceTintColor: Color.fromRGBO(58, 88, 167, 1),
                           child: Row(children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -100,7 +101,7 @@ class _HomeState extends State<Home> {
                         Spacer(),
                         Spacer(),
                       ])),
-                      Card(
+                      Card(surfaceTintColor: Color.fromRGBO(120, 163, 215, 1),
                           child: Row(children: [
                         Padding(
                           padding: const EdgeInsets.all(8.0),

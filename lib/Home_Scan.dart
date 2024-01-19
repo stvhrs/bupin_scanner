@@ -75,13 +75,13 @@ class _HalmanScanState extends State<HalmanScan> {
             FloatingActionButton(
                 child: Icon(
                   Icons.qr_code_scanner_rounded,
-                  color: Color.fromRGBO(70, 89, 166, 1),
+                  color: Colors.white,
                   size: 40,
                 ),
-                backgroundColor: Colors.white,
+                backgroundColor: Color.fromRGBO(70, 89, 166, 1),
                 onPressed: () {
                   Navigator.of(context).push(CustomRoute(
-                    builder: (context) => QRViewExample(),
+                    builder: (context) => QRViewExample(false),
                   ));
                 }),
             SizedBox(

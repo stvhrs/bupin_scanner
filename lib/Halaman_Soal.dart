@@ -23,12 +23,17 @@ class _HalamanSoalState extends State<HalamanSoal> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('WebView Bank Soal'),
       ),
-      body: WebViewWidget(
-        controller: controller,
+      body: Stack(alignment: Alignment.center,
+        children: [
+          Image.asset("asset/Icon.png"),
+          WebViewWidget(
+            controller: controller,
+          ),
+        ],
       ),
     );
   }
