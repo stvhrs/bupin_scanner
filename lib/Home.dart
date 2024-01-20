@@ -2,14 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:Bupin/Banner.dart';
 import 'package:Bupin/Halaman_Soal.dart';
 import 'package:Bupin/Home_Het.dart';
 import 'package:Bupin/Home_Scan.dart';
 import 'package:Bupin/styles/PageTransitionTheme.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
+
 import 'package:url_launcher/url_launcher.dart';
+import 'package:dio/dio.dart';
 
 /// Flutter code sample for [BottomNavigationBar].
 
@@ -21,14 +22,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
 
   int _selectedIndex = 1;
   static const TextStyle optionStyle =
@@ -144,126 +137,61 @@ class _HomeState extends State<Home> {
               )));
     }
   }
-    wasu() async {
-      try {
-        response = await http.get(Uri.parse(
-            "https://paling.kencang.id/api/banner/?dismissable=1&width=720&height=800"));
-      } catch (e) {
-        log(e.toString());
-      }
-    }
-  Response response = Response('{}', 200);
-  
-  @override
-  void didChangeDependencies()  {
-    log("did Home");
 
-    Timer(const Duration(milliseconds: 200), () {
-      showDialog(
-          context: context,
-          barrierColor: Colors.black.withOpacity(0.75),
-          barrierDismissible: true,
-          builder: (context) {
-            return  PopScope(
-                              canPop: false,
-                              child: FutureBuilder(
-                future: wasu(),
-                builder: (context, snapshot) {
-                  return snapshot.connectionState == ConnectionState.waiting
-                      ? const SizedBox()
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                           Container(
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25)),
-                                child: GestureDetector(
-                                    onTap: () {
-                                  
-                                      if ((jsonDecode(response.body)[0]["link"]
-                                              as String)
-                                          .isNotEmpty) {
-                                        _launchInBrowser(Uri.parse(
-                                            jsonDecode(response.body)[0]
-                                                ["link"]));
-                                      }
-                                    },
-                                    child: FadeInImage(
-                                      image: NetworkImage(
-                                        jsonDecode(response.body)[0]["image"],
-                                      ),
-                                      placeholder: const AssetImage(
-                                        "asset/place.png",
-                                      ),
-                                    )),
-                              ),
-                            
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CircleAvatar(
-                                backgroundColor: jsonDecode(response.body)[0]
-                                            ["dismissable"] ==
-                                        true
-                                    ? Colors.white
-                                    : Colors.transparent,
-                                child: IconButton(
-                                    onPressed: () {
-                                      if (jsonDecode(response.body)[0]
-                                              ["dismissable"] ==
-                                          true) {
-                                        Navigator.of(context).pop();
-                                      }
-                                    },
-                                    icon: Icon(
-                                      Icons.close,
-                                      color: jsonDecode(response.body)[0]
-                                                  ["dismissable"] ==
-                                              true
-                                          ? Colors.red
-                                          : Colors.transparent,
-                                    )),
-                              ),
-                            )
-                          ],
-                        );
-                }));
-          });
-    });
-log("did Home2");
-    super.didChangeDependencies();
+  Map<String, dynamic> data = {};
+ Future< Map<String,dynamic>> checkBanner () async {
+    try {
+      final dio = Dio();
+      final response = await dio.get(
+          "https://paling.kencang.id/api/banner/?dismissable01&width=720&height=800",);
+      data = response.data[0];
+   return data;
+    } catch (e) {
+     return {};
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-          child: _widgetOptions[_selectedIndex],
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Scaffold(
+          body: Center(
+            child: _widgetOptions[_selectedIndex],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: Colors.white,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.menu_book_rounded),
+                label: 'Buku HET',
+                backgroundColor: Color.fromRGBO(70, 89, 166, 1),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.qr_code_scanner_rounded),
+                label: 'Scan',
+                backgroundColor: Color.fromRGBO(70, 89, 166, 1),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.library_books_rounded),
+                label: 'Bank Soal',
+                backgroundColor: Color.fromRGBO(70, 89, 166, 1),
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: const Color.fromRGBO(70, 89, 166, 1),
+            onTap: _onItemTapped,
+          ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Colors.white,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu_book_rounded),
-              label: 'Buku HET',
-              backgroundColor: Color.fromRGBO(70, 89, 166, 1),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.qr_code_scanner_rounded),
-              label: 'Scan',
-              backgroundColor: Color.fromRGBO(70, 89, 166, 1),
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.library_books_rounded),
-              label: 'Bank Soal',
-              backgroundColor: Color.fromRGBO(70, 89, 166, 1),
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: const Color.fromRGBO(70, 89, 166, 1),
-          onTap: _onItemTapped,
-        ),
-      
+        FutureBuilder(
+            future: checkBanner(),
+            builder: (context, AsyncSnapshot<Map<String,dynamic>> snapshot) {
+              return snapshot.connectionState == ConnectionState.waiting
+                  ? const SizedBox()
+                  : HalamanBanner(snapshot.data!);
+            }),
+      ],
     );
   }
 }

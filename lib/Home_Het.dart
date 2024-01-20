@@ -1,4 +1,5 @@
 import 'package:Bupin/models/Het.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:developer';
@@ -49,12 +50,14 @@ class _HalmanHetState extends State<HalmanHet> {
   Future<void> fetchApi() async {
     try {
       listHET.clear();
+      final dio = Dio();
       int data = list.indexOf(dropdownValue);
-      final response = await http.get(
-          Uri.parse("https://paling.kencang.id/api/het?kelas=${list2[data]}"));
+      final response = await dio.get(
+          "https://paling.kencang.id/api/het?kelas=${list2[data]}");
 
       if (response.statusCode == 200) {
-        for (var element in jsonDecode(response.body)) {
+        for (Map<String,dynamic> element in response.data) {
+          log(element.toString());
           listHET.add(Het.fromMap(element));
         }
 

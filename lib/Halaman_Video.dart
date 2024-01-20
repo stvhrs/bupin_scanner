@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:Bupin/models/Video.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -59,21 +60,21 @@ class _HalamanVideoState extends State<HalamanVideo>
     );
 
     _controller.loadVideo(widget.video.linkVideo);
-
-    final response = await http.get(Uri.parse(
-        "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${widget.video.ytId}&key=AIzaSyDgsDwiV1qvlNa7aes8aR1KFzRSWLlP6Bw"));
-    log(jsonDecode(response.body)["items"][0]["snippet"]["localized"]
+final dio = Dio();
+    final response = await dio.get(
+        "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${widget.video.ytId}&key=AIzaSyDgsDwiV1qvlNa7aes8aR1KFzRSWLlP6Bw");
+    log(response.data["items"][0]["snippet"]["localized"]
             ["description"]
         .toString());
 
-    if ((jsonDecode(response.body)["items"][0]["snippet"]["localized"]
+    if ((response.data["items"][0]["snippet"]["localized"]
             ["description"] as String)
         .contains("ctv")) {
       aspectRatio = 9 / 16;
 
     
 
-      return (jsonDecode(response.body)["items"][0]["snippet"]["localized"]
+      return (response.data["items"][0]["snippet"]["localized"]
           ["description "] as String);
     } else {
       return _controller.metadata.title;

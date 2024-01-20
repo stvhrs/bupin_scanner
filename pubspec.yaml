@@ -42,6 +42,7 @@ dependencies:
   youtube_player_iframe: ^4.0.4
   http: ^1.2.0
   webview_flutter: ^4.4.4
+  dio: ^5.4.0
  
 
 dev_dependencies:

@@ -6,9 +6,10 @@ import 'package:Bupin/Halaman_Video.dart';
 import 'package:Bupin/models/Video.dart';
 import 'package:Bupin/styles/PageTransitionTheme.dart';
 import 'package:Bupin/widgets/scann_aniamtion/scanning_effect.dart';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRViewExample extends StatefulWidget {
@@ -182,7 +183,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   push(Response respone) async {
     scanned = await Navigator.of(context).push(CustomRoute(
         builder: (context) =>
-            HalamanVideo(Video.fromMap(jsonDecode(respone.body)[0]))));
+            HalamanVideo(Video.fromMap(respone.data[0]))));
   }
 
   Widget _buildQrView(BuildContext context) {
@@ -217,7 +218,8 @@ class _QRViewExampleState extends State<QRViewExample> {
           if (scanData.code!.contains("VID")) {
             scanned = true;
             setState(() {});
-            final response = await http.get(Uri.parse(scanData.code!));
+            final dio = Dio();
+            final response = await dio.get(scanData.code!);
             push(response);
           }
         }
