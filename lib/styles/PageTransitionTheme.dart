@@ -6,9 +6,9 @@ class CustomRoute<T> extends MaterialPageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    var begin = Offset(1.0, 0.0);
+    var begin = const Offset(1.0, 0.0);
     var end = Offset.zero;
-    var curve = Curves.easeOut;
+    var curve = Curves.easeInOut;
     var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
     return SlideTransition(
       position: animation.drive(tween),

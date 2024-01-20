@@ -7,7 +7,9 @@ import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 ///
 class PlayPauseButtonBar extends StatelessWidget {
-  final ValueNotifier<bool> _isMuted = ValueNotifier(false);
+
+
+  const PlayPauseButtonBar({super.key});
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -17,10 +19,10 @@ class PlayPauseButtonBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Spacer(),
+          const Spacer(),
           Container(
-            padding: EdgeInsets.only(right: 5, left: 10),
-            margin: EdgeInsets.all(10),
+            padding: const EdgeInsets.only(right: 5, left: 10),
+            margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
                 color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(10)),

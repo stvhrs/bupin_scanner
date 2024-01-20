@@ -2,23 +2,18 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:Bupin/Halaman_Soal.dart';
 import 'package:Bupin/Halaman_Video.dart';
 import 'package:Bupin/models/Video.dart';
 import 'package:Bupin/styles/PageTransitionTheme.dart';
 import 'package:Bupin/widgets/scann_aniamtion/scanning_effect.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:url_launcher/url_launcher.dart';
-import "" as http;
 
 class QRViewExample extends StatefulWidget {
   final bool scanned;
-  const QRViewExample(
-    this.scanned,
-  );
+  const QRViewExample(this.scanned, {super.key});
 
   @override
   State<StatefulWidget> createState() => _QRViewExampleState();
@@ -43,21 +38,18 @@ class _QRViewExampleState extends State<QRViewExample> {
 
   @override
   void initState() {
-    log("qr scan scanned");
-
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     scanned = widget.scanned;
-    log("didchangedependencies");
+
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    log("Build");
     return Scaffold(
       body: Column(
         children: <Widget>[
@@ -75,12 +67,12 @@ class _QRViewExampleState extends State<QRViewExample> {
                         ? MediaQuery.of(context).size.width / 1.7
                         : MediaQuery.of(context).size.width / 1.7,
                     child: ScanningEffect(
-                      scanningColor: Color.fromRGBO(70, 89, 166, 1),
-                      borderLineColor: Color.fromRGBO(236, 180, 84, 1),
-                      delay: Duration(seconds: 1),
-                      duration: Duration(seconds: 2),
+                      enableBorder: false,
+                      scanningColor: const Color.fromRGBO(236, 180, 84, 1),
+                      delay: const Duration(seconds: 1),
+                      duration: const Duration(seconds: 2),
                       child: Container(
-                        child: SizedBox(),
+                        child: const SizedBox(),
                       ),
                     ),
                   ),
@@ -96,6 +88,22 @@ class _QRViewExampleState extends State<QRViewExample> {
                   fit: BoxFit.fitWidth,
                   repeat: ImageRepeat.repeat,
                 ),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton.filled(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.white)),
+                      color: Colors.white,
+                      highlightColor: Colors.grey,
+                      onPressed: () {
+                        Navigator.pop(context, false);
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_rounded,
+                        color: Theme.of(context).primaryColor,
+                      )),
+                ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: Row(
@@ -108,12 +116,13 @@ class _QRViewExampleState extends State<QRViewExample> {
                           child: Stack(
                             alignment: Alignment.bottomLeft,
                             children: [
-                              Column(
+                              const Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Spacer(),
+                                  Spacer(),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 16),
+                                    padding: EdgeInsets.only(left: 16),
                                     child: Text(
                                       "Scan",
                                       style: TextStyle(
@@ -123,7 +132,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 16),
+                                    padding: EdgeInsets.only(left: 16),
                                     child: Text(
                                       "Akses Video & Soal",
                                       style: TextStyle(
@@ -133,6 +142,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                                           fontWeight: FontWeight.w700),
                                     ),
                                   ),
+                                  Spacer(),
                                   Spacer(),
                                   Spacer(),
                                   Spacer(),
@@ -169,7 +179,11 @@ class _QRViewExampleState extends State<QRViewExample> {
     );
   }
 
-  push() async {}
+  push(Response respone) async {
+    scanned = await Navigator.of(context).push(CustomRoute(
+        builder: (context) =>
+            HalamanVideo(Video.fromMap(jsonDecode(respone.body)[0]))));
+  }
 
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
@@ -182,7 +196,7 @@ class _QRViewExampleState extends State<QRViewExample> {
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-          borderColor: Color.fromRGBO(70, 89, 166, 1),
+          borderColor: const Color.fromRGBO(70, 89, 166, 1),
           borderRadius: 6,
           borderLength: 30,
           borderWidth: 10,
@@ -197,19 +211,17 @@ class _QRViewExampleState extends State<QRViewExample> {
     });
     controller.resumeCamera();
     controller.scannedDataStream.listen((scanData) async {
-      result = scanData;
-      if (scanned == false) {
-        if (scanData.code!.contains("VID")) {
-          scanned = true;
-          setState(() {});
-          final response = await http.get(Uri.parse(scanData.code!));
-
-          scanned = await Navigator.of(context).push(CustomRoute(
-            builder: (context) => HalamanVideo(
-               Video.fromMap( jsonDecode(response.body)[0])),
-          ));
+      try {
+        result = scanData;
+        if (scanned == false) {
+          if (scanData.code!.contains("VID")) {
+            scanned = true;
+            setState(() {});
+            final response = await http.get(Uri.parse(scanData.code!));
+            push(response);
+          }
         }
-      }
+      } catch (e) {}
     });
   }
 
@@ -225,7 +237,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   @override
   void dispose() {
     controller?.dispose();
-    scanned = false;
+
     super.dispose();
   }
 }

@@ -1,19 +1,10 @@
-
 import 'package:Bupin/models/Het.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:developer';
 
-
-import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
-import 'widgets/meta_data_section.dart';
-import 'widgets/play_pause_button_bar.dart';
-import 'widgets/player_state_section.dart';
-import 'widgets/source_input_section.dart';
 import 'package:http/http.dart' as http;
 
 List<String> list = <String>[
@@ -55,32 +46,32 @@ class HalmanHet extends StatefulWidget {
 class _HalmanHetState extends State<HalmanHet> {
   List<Het> listHET = [];
 
-  bool _loading = true;
-
   Future<void> fetchApi() async {
-    listHET.clear();
-    int data = list.indexOf(dropdownValue);
-    final response = await http
-        .get(Uri.parse("https://paling.kencang.id/api/het?kelas=${list2[data]}"));
+    try {
+      listHET.clear();
+      int data = list.indexOf(dropdownValue);
+      final response = await http.get(
+          Uri.parse("https://paling.kencang.id/api/het?kelas=${list2[data]}"));
 
-    log(jsonDecode(response.body).toString());
+      if (response.statusCode == 200) {
+        for (var element in jsonDecode(response.body)) {
+          listHET.add(Het.fromMap(element));
+        }
 
-    if (response.statusCode == 200) {
-      for (var element in jsonDecode(response.body)) {
-        listHET.add(Het.fromMap(element));
+        setState(() {});
       }
-      _loading = false;
-      setState(() {});
+    } catch (e) {
+      log(e.toString());
     }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchApi();
   }
- Future<void> _launchInBrowser(Uri url) async {
+
+  Future<void> _launchInBrowser(Uri url) async {
     if (!await launchUrl(
       url,
       mode: LaunchMode.externalApplication,
@@ -106,12 +97,13 @@ class _HalmanHetState extends State<HalmanHet> {
                     "asset/Halaman_HET/Bukut Het-8.png",
                     width: MediaQuery.of(context).size.width * 0.3,
                   )),
-              Positioned(
+              const Positioned(
                   left: 10,
                   bottom: 10,
                   child: Text(
-                    "Katalog \nBuku PDF Gratis",
+                    "Katalog\nBuku PDF Gratis",
                     style: TextStyle(
+                        height: 1.22,
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
@@ -132,7 +124,7 @@ class _HalmanHetState extends State<HalmanHet> {
             ],
           ),
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10), topRight: Radius.circular(10)),
@@ -150,7 +142,7 @@ class _HalmanHetState extends State<HalmanHet> {
                     DropdownButton<String>(
                       value: dropdownValue,
                       dropdownColor: Colors.white,
-                      iconEnabledColor: Color.fromARGB(255, 66, 66, 66),
+                      iconEnabledColor: const Color.fromARGB(255, 66, 66, 66),
                       icon: const Icon(
                         Icons.arrow_downward_rounded,
                         size: 16,
@@ -167,11 +159,9 @@ class _HalmanHetState extends State<HalmanHet> {
                       ),
                       onChanged: (String? value) {
                         // This is called when the user selects an item.
-      
+
                         dropdownValue = value!;
-                        setState(() {
-                          
-                        });
+                        setState(() {});
                         fetchApi();
                       },
                       items: list.map<DropdownMenuItem<String>>((String value) {
@@ -188,64 +178,79 @@ class _HalmanHetState extends State<HalmanHet> {
           ),
           listHET.isEmpty
               ? Expanded(
-                child: Container(
+                  child: Container(
                     color: Colors.white,
                     child: Center(
                       child: CircularProgressIndicator(
-                          color: Theme.of(context).primaryColor,backgroundColor: Color.fromRGBO(236, 180, 84, 1),),
+                        color: Theme.of(context).primaryColor,
+                        backgroundColor: const Color.fromRGBO(236, 180, 84, 1),
+                      ),
                     ),
                   ),
-              )
+                )
               : Expanded(
                   flex: 10,
                   child: Container(
                     color: Colors.white,
                     child: GridView.builder(
-                      padding: EdgeInsets.only(top: 20),
+                      padding: const EdgeInsets.only(top: 20),
                       itemCount: listHET.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisSpacing: 0,
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.8),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisSpacing: 0,
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.8),
                       itemBuilder: (context, index) => Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: InkWell(splashColor: Theme.of(context).primaryColor,hoverColor:Theme.of(context).primaryColor,highlightColor: Theme.of(context).primaryColor,focusColor: Theme.of(context).primaryColor ,onTap: (){
-
-                                    _launchInBrowser(Uri.parse(listHET[index].pdf));
-                                  },
-                                    child:Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                margin: EdgeInsets.only(bottom: 8),
-                                child: Container(
-                                  child:  ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: FadeInImage(
-                                          image: NetworkImage(
-                                            listHET[index].imgUrl,
-                                           
-                                          ),placeholder: AssetImage("asset/place.png",),
-                                        )),
-                                  
-                                ),
-                              ),
-                              Center(
-                                  child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 10.0, right: 10),
-                                child: Text(
-                                  listHET[index].namaBuku,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,color:  Color.fromARGB(255, 66, 66, 66),
-                                    fontSize: 10,
-                                    overflow: TextOverflow.fade,
+                        child: InkWell(
+                            splashColor: Theme.of(context).primaryColor,
+                            hoverColor: Theme.of(context).primaryColor,
+                            highlightColor: Theme.of(context).primaryColor,
+                            focusColor: Theme.of(context).primaryColor,
+                            onTap: () {
+                              _launchInBrowser(Uri.parse(listHET[index].pdf));
+                            },
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
+                                    margin: const EdgeInsets.only(bottom: 8),
+                                    child: Container(
+                                      child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          child: FadeInImage(imageErrorBuilder: (context, error, stackTrace) {
+                                            return  Image.asset(
+                                              "asset/place.png",
+                                            );
+                                          },
+                                            image: NetworkImage(
+                                              listHET[index].imgUrl,
+                                            ),
+                                            placeholder: const AssetImage(
+                                              "asset/place.png",
+                                            ),
+                                          )),
+                                    ),
                                   ),
-                                ),
-                              )),
-                            ])),
+                                  Center(
+                                      child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 10.0, right: 10),
+                                    child: Text(
+                                      listHET[index].namaBuku,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: Color.fromARGB(255, 66, 66, 66),
+                                        fontSize: 10,
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                    ),
+                                  )),
+                                ])),
                       ),
                     ),
                   ),

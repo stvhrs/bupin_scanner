@@ -1,4 +1,3 @@
-import 'package:Bupin/Halaman_Video.dart';
 import 'package:Bupin/Home.dart';
 
 import 'package:flutter/material.dart';
@@ -6,6 +5,9 @@ import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent
+));
 
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -13,13 +15,18 @@ void main() async {
   return runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
-      theme: ThemeData(appBarTheme: AppBarTheme(actionsIconTheme: IconThemeData(color: Colors.white)),
-
+      theme: ThemeData(
+          appBarTheme:
+              const AppBarTheme(actionsIconTheme: IconThemeData(color: Colors.white)),
           fontFamily: 'Nunito',
-          textTheme: TextTheme(titleMedium: TextStyle(fontFamily: "Nunito")),
-          scaffoldBackgroundColor: Color.fromRGBO(70, 89, 166, 1),
+          textTheme: const TextTheme(titleMedium: TextStyle(fontFamily: "Nunito")),
+          scaffoldBackgroundColor: const Color.fromRGBO(70, 89, 166, 1),
           colorScheme: ColorScheme.fromSwatch().copyWith(
-              secondary: Color.fromRGBO(236, 180, 84, 1),
-              primary: Color.fromRGBO(70, 89, 166, 1))),
-      home: Home()));
+              secondary: const Color.fromRGBO(236, 180, 84, 1),
+              primary: const Color.fromRGBO(70, 89, 166, 1))),
+      home: Builder(
+        builder: (context) {  
+          return const Home();
+        }
+      )));
 }
