@@ -9,9 +9,10 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
   statusBarColor: Colors.transparent
 ));
 
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
+  // await SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  // ]);
+  
   return runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.dark,
@@ -24,9 +25,7 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
           colorScheme: ColorScheme.fromSwatch().copyWith(
               secondary: const Color.fromRGBO(236, 180, 84, 1),
               primary: const Color.fromRGBO(70, 89, 166, 1))),
-      home: Builder(
-        builder: (context) {  
-          return const Home();
-        }
-      )));
+      home:  const Home()));
+        
+    
 }

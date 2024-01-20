@@ -219,7 +219,10 @@ class _QRViewExampleState extends State<QRViewExample> {
             scanned = true;
             setState(() {});
             final dio = Dio();
-            final response = await dio.get(scanData.code!);
+            String tets=scanData.code!;
+            log(tets);
+            tets=tets.replaceAll( "buku.bupin.id/?","bupin.id/api/apibarang.php?kodeQR=");
+            final response = await dio.get(tets);
             push(response);
           }
         }

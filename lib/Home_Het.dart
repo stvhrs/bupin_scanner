@@ -64,7 +64,7 @@ class _HalmanHetState extends State<HalmanHet> {
         setState(() {});
       }
     } catch (e) {
-      log(e.toString());
+      log("errrorrr");
     }
   }
 

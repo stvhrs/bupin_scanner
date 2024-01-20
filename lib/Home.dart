@@ -22,7 +22,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   int _selectedIndex = 1;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -139,15 +138,16 @@ class _HomeState extends State<Home> {
   }
 
   Map<String, dynamic> data = {};
- Future< Map<String,dynamic>> checkBanner () async {
+  Future<Map<String, dynamic>> checkBanner() async {
     try {
       final dio = Dio();
       final response = await dio.get(
-          "https://paling.kencang.id/api/banner/?dismissable01&width=720&height=800",);
+        "https://bupin.tegar.dev",
+      );
       data = response.data[0];
-   return data;
+      return data;
     } catch (e) {
-     return {};
+      return {};
     }
   }
 
@@ -184,13 +184,13 @@ class _HomeState extends State<Home> {
             onTap: _onItemTapped,
           ),
         ),
-        FutureBuilder(
-            future: checkBanner(),
-            builder: (context, AsyncSnapshot<Map<String,dynamic>> snapshot) {
-              return snapshot.connectionState == ConnectionState.waiting
-                  ? const SizedBox()
-                  : HalamanBanner(snapshot.data!);
-            }),
+        // FutureBuilder(
+        //     future: checkBanner(),
+        //     builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+        //       return snapshot.connectionState == ConnectionState.waiting
+        //           ? const SizedBox()
+        //           : HalamanBanner(snapshot.data!);
+        //     }),
       ],
     );
   }
