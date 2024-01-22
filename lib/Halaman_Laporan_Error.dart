@@ -40,7 +40,7 @@ class HalamanLaporan extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(
-                "Mohon maaf atas ketidaknyamannya, Kode QR tersebut mengalami error, jika bersedia silahkan laporkan ke CS Admin kami, terimakasih ",
+                "Mohon maaf atas ketidaknyamannya, kode QR tersebut mengalami error, jika bersedia silahkan laporkan ke CS kami, terimakasih ",
                 textAlign: TextAlign.center,
               ),
             ),

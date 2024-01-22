@@ -96,14 +96,12 @@ class _HalmanScanState extends State<HalmanScan> {
           SizedBox(
             width: width * 0.3,
             height: width * 0.3,
-            child: ScanningEffect(
+            child: const ScanningEffect(
               enableBorder: false,
-              scanningColor: const Color.fromRGBO(236, 180, 84, 1),
-              delay: const Duration(milliseconds: 200),
-              duration: const Duration(seconds: 2),
-              child: Container(
-                child: const SizedBox(),
-              ),
+              scanningColor: Color.fromRGBO(236, 180, 84, 1),
+              delay: Duration(milliseconds: 200),
+              duration: Duration(seconds: 2),
+              child: SizedBox(),
             ),
           ),
         ],

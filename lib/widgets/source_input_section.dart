@@ -10,10 +10,10 @@ class SourceInputSection extends StatefulWidget {
   const SourceInputSection({super.key});
 
   @override
-  _SourceInputSectionState createState() => _SourceInputSectionState();
+  SourceInputSectionState createState() => SourceInputSectionState();
 }
 
-class _SourceInputSectionState extends State<SourceInputSection> {
+class SourceInputSectionState extends State<SourceInputSection> {
   late TextEditingController _textController;
   ListType? _playlistType;
 

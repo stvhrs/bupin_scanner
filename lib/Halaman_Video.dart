@@ -17,10 +17,10 @@ class HalamanVideo extends StatefulWidget {
 
   const HalamanVideo(this.video, {super.key});
   @override
-  _HalamanVideoState createState() => _HalamanVideoState();
+  HalamanVideoState createState() => HalamanVideoState();
 }
 
-class _HalamanVideoState extends State<HalamanVideo>
+class HalamanVideoState extends State<HalamanVideo>
     with TickerProviderStateMixin {
   late final AnimationController _controller2 = AnimationController(
     duration: const Duration(seconds: 2),
@@ -196,7 +196,6 @@ class Controls extends StatelessWidget {
     );
   }
 
-  Widget get _space => const SizedBox(height: 10);
 }
 
 ///
