@@ -201,8 +201,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 backgroundColor: Color.fromRGBO(70, 89, 166, 1),
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.qr_code_scanner_rounded),
-                label: 'Scan',
+                icon: Icon(Icons.home),
+                label: 'Home',
                 backgroundColor: Color.fromRGBO(70, 89, 166, 1),
               ),
               BottomNavigationBarItem(
