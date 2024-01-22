@@ -61,7 +61,10 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                 closed = true;
                                 return const SizedBox();
                               })
-                            : Container(
+                            : Scaffold(
+                            backgroundColor: Colors.black.withOpacity(0.7),
+                            body: Center(
+                              child:Container(
                                 width: MediaQuery.of(context).size.width * 0.8,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(25)),
@@ -93,7 +96,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                                 snapshot.data!["dismissable"] == true
                                                     ? Colors.white
                                                     : Colors.transparent,
-                                            child: IconButton.outlined(
+                                            child: IconButton(
                                                 color: Colors.red,
                                                 focusColor: Colors.red,
                                                 hoverColor: Colors.red,
@@ -116,7 +119,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                       ],
                                     )),
                               ),
-                  ));
+                  ))));
             });
   }
 }
