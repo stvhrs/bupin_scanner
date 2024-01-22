@@ -1,9 +1,7 @@
-import 'dart:developer';
 
 import 'package:Bupin/Halaman_Laporan_Error.dart';
 import 'package:Bupin/styles/PageTransitionTheme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class HalamanSoal extends StatefulWidget {
@@ -11,7 +9,7 @@ class HalamanSoal extends StatefulWidget {
   final String jenjang;
   final bool soalScan;
   final String cbtSdSmpSma;
-  HalamanSoal(this.url, this.jenjang, this.soalScan, this.cbtSdSmpSma);
+  const HalamanSoal(this.url, this.jenjang, this.soalScan, this.cbtSdSmpSma, {super.key});
 
   @override
   State<HalamanSoal> createState() => _HalamanSoalState();
@@ -75,16 +73,16 @@ class _HalamanSoalState extends State<HalamanSoal>
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: widget.jenjang.contains("SD/MI")
-              ? Color.fromRGBO(205, 32, 49, 0.8)
+              ? const Color.fromRGBO(205, 32, 49, 0.8)
               : widget.jenjang.contains("SMP/MTS")
                   ? const Color.fromRGBO(58, 88, 167, 0.8)
-                  : Color.fromRGBO(120, 163, 215, 0.8),
+                  : const Color.fromRGBO(120, 163, 215, 0.8),
           actions: [
             widget.soalScan == true
                 ? Container(
                     padding:
-                        EdgeInsets.only(right: 10, left: 10, top: 5, bottom: 5),
-                    margin: EdgeInsets.only(right: 10),
+                        const EdgeInsets.only(right: 10, left: 10, top: 5, bottom: 5),
+                    margin: const EdgeInsets.only(right: 10),
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(50)),
@@ -97,14 +95,14 @@ class _HalamanSoalState extends State<HalamanSoal>
                                         "")),
                               ));
                             },
-                            child: Row(
+                            child: const Row(
                       children: [
                         Text(
                           "Laporkan Bug",
                           style: TextStyle(color: Colors.red),
                         ),
                         Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
+                              padding: EdgeInsets.only(left: 8.0),
                               child: Icon(
                                 Icons.warning_rounded,
                                 color: Colors.red,
@@ -114,19 +112,19 @@ class _HalamanSoalState extends State<HalamanSoal>
                       ],
                     ),
                     ))
-                : SizedBox()
+                : const SizedBox()
           ],
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context, false);
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.arrow_back_rounded,
                 color: Colors.white,
               )),
           title: Text(
-            '${widget.jenjang}',
-            style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white),
+            widget.jenjang,
+            style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.white),
           ),
         ),
         body: Stack(

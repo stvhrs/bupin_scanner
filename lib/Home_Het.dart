@@ -258,7 +258,7 @@ class _HalmanHetState extends State<HalmanHet> {
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w700,
                                         color: Color.fromARGB(255, 66, 66, 66),
-                                        fontSize: 12,
+                                        fontSize: 10,
                                         overflow: TextOverflow.fade,
                                       ),
                                     ),

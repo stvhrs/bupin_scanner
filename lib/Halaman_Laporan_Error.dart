@@ -3,11 +3,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HalamanLaporan extends StatelessWidget {
   final String id;
-  HalamanLaporan(this.id);
+  const HalamanLaporan(this.id, {super.key});
   Future<void> _launchInBrowser() async {
     if (!await launchUrl(
       Uri.parse(
-          "https://api.whatsapp.com/send/?phone=6285174484832&text=Saya+Menemukan+Kode%20QR+yang+error+berikut+kodenya+${id}&type=phone_number&app_absent=0 "),
+          "https://api.whatsapp.com/send/?phone=6285174484832&text=Saya+Menemukan+Kode%20QR+yang+error+berikut+kodenya+$id&type=phone_number&app_absent=0 "),
       mode: LaunchMode.externalApplication,
     )) {
       throw Exception('Could not launch ');
@@ -35,29 +35,29 @@ class HalamanLaporan extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Spacer(flex: 5,),
+            const Spacer(flex: 5,),
          
-            Padding(
-              padding: const EdgeInsets.all(20.0),
+            const Padding(
+              padding: EdgeInsets.all(20.0),
               child: Text(
                 "Mohon maaf atas ketidaknyamannya, Kode QR tersebut mengalami error, jika bersedia silahkan laporkan ke CS Admin kami, terimakasih ",
                 textAlign: TextAlign.center,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             ElevatedButton(
                 style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.green)),
                 onPressed: () {
                   _launchInBrowser();
                 },
-                child: Text(
+                child: const Text(
                   "Laporkan ke Whatsapp CS Kami ",
                   textAlign: TextAlign.justify,
                   style: TextStyle(color: Colors.white),
                 )),
           
-            Spacer(flex:7,),
+            const Spacer(flex:7,),
          
           ],
         ),

@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:Bupin/Halaman_Laporan_Error.dart';
@@ -11,7 +10,6 @@ import 'package:Bupin/widgets/scann_aniamtion/scanning_effect.dart';
 import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -240,7 +238,7 @@ class _QRViewExampleState extends State<QRViewExample> {
             int kodeTingkat = int.parse(
                 jenjangCbt[jenjangCbt.indexOf(".") + 1] +
                     jenjangCbt[jenjangCbt.indexOf(".") + 2]);
-            log("kode" + kodeTingkat.toString());
+            log("kode$kodeTingkat");
             String jenjang = "cbtsd";
             if (kodeTingkat == 15 ||
                 kodeTingkat == 20 ||

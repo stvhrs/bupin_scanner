@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,7 +25,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
 
   @override
   void dispose() {
-    closed = true;
+  
 
     super.dispose();
   }
@@ -58,7 +57,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
               return PopScope(
                   canPop: false,
                   child: Center(
-                    child: snapshot.connectionState == ConnectionState.waiting
+                    child: snapshot.connectionState != ConnectionState.done
                         ? Scaffold(
                             backgroundColor: Colors.black.withOpacity(0.7),
                             body: Center(
