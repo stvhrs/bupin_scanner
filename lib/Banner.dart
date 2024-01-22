@@ -25,8 +25,6 @@ class _HalamanBannerState extends State<HalamanBanner> {
 
   @override
   void dispose() {
-  
-
     super.dispose();
   }
 
@@ -51,13 +49,14 @@ class _HalamanBannerState extends State<HalamanBanner> {
   Widget build(BuildContext context) {
     return closed == true
         ? const SizedBox()
-        : FutureBuilder<Object>(
+        : FutureBuilder<Map<String, dynamic>>(
             future: checkBanner(),
             builder: (context, snapshot) {
               return PopScope(
                   canPop: false,
                   child: Center(
-                    child: snapshot.connectionState != ConnectionState.done
+                    child: (snapshot.connectionState != ConnectionState.done ||
+                            snapshot.data!.isEmpty)
                         ? Scaffold(
                             backgroundColor: Colors.black.withOpacity(0.7),
                             body: Center(
