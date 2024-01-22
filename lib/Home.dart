@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:Bupin/Banner.dart';
 import 'package:Bupin/Halaman_Soal.dart';
@@ -6,6 +9,8 @@ import 'package:Bupin/Home_Scan.dart';
 import 'package:Bupin/styles/PageTransitionTheme.dart';
 import 'package:flutter/material.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+import 'package:dio/dio.dart';
 
 /// Flutter code sample for [BottomNavigationBar].
 
@@ -69,7 +74,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(CustomRoute(
-                                builder: (context) => const HalamanSoal("https://tim.bupin.id/cbtakm/login.php?6666"),
+                                builder: (context) => HalamanSoal(
+                                    "https://tim.bupin.id/cbstakm/login.php?6666",
+                                    "Bank Soal SD/MI",
+                                    false,
+                                    ""),
                               ));
                             },
                             child: Card(
@@ -97,7 +106,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(CustomRoute(
-                                builder: (context) => const HalamanSoal("https://tim.bupin.id/cbtakm/login.php?777"),
+                                builder: (context) => HalamanSoal(
+                                    "https://tim.bupin.id/cbtakm/login.php?777",
+                                    'Bank Soal SMP/MTS',
+                                    false,
+                                    ""),
                               ));
                             },
                             child: Card(
@@ -125,7 +138,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(CustomRoute(
-                                builder: (context) => const HalamanSoal(" https://tim.bupin.id/cbtakm/login.php?9999"),
+                                builder: (context) => HalamanSoal(
+                                    "https://tim.bupin.id/cbtakm/login.php?9999",
+                                    'Bank Soal SMA/MA',
+                                    false,
+                                    ""),
                               ));
                             },
                             child: Card(
@@ -160,7 +177,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                         onTap: () {
                           Navigator.of(context).pop();
                         },
-                        child: const Icon(Icons.close, size: 16, color: Colors.red),
+                        child: Icon(Icons.close, size: 16, color: Colors.red),
                       ),
                     ),
                   ],
@@ -176,7 +193,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       children: [
         Scaffold(
           body: TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
+            physics: NeverScrollableScrollPhysics(),
             controller: _controller,
             children: _widgetOptions,
           ),
@@ -204,7 +221,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
             onTap: _onItemTapped,
           ),
         ),
-        const HalamanBanner()
+        HalamanBanner()
       ],
     );
   }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:developer';
 
-
 import 'package:url_launcher/url_launcher.dart';
 
 class HalamanBanner extends StatefulWidget {
@@ -26,10 +25,14 @@ class _HalamanBannerState extends State<HalamanBanner> {
   }
 
   @override
-  void didChangeDependencies() {
-    log("did Home");
+  void dispose() {
+    closed = true;
 
-    log("did Home2");
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
     super.didChangeDependencies();
   }
 
@@ -49,45 +52,27 @@ class _HalamanBannerState extends State<HalamanBanner> {
   Widget build(BuildContext context) {
     return closed == true
         ? const SizedBox()
-        : Scaffold(
-            backgroundColor: Colors.black.withOpacity(0.7),
-            body: FutureBuilder<Object>(
-                future: checkBanner(),
-                builder: (context, snapshot) {
-                  return PopScope(
-                      canPop: false,
-                      child: Center(
-                        child: snapshot.connectionState ==
-                                ConnectionState.waiting
-                            ? Center(
-                                child: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  child: Stack(
-                                    alignment: Alignment.topRight,
-                                    children: [
-                                      ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(25),
-                                          child: Image.asset(
-                                            "asset/place.png",
-                                            color:
-                                                Colors.black.withOpacity(0.8),
-                                          )),
-                                      CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        child: IconButton.outlined(
-                                            color: Colors.red,
-                                            focusColor: Colors.red,
-                                            hoverColor: Colors.red,
-                                            onPressed: () {},
-                                            icon: const Icon(Icons.close,
-                                                color: Colors.red)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
+        : FutureBuilder<Object>(
+            future: checkBanner(),
+            builder: (context, snapshot) {
+              return PopScope(
+                  canPop: false,
+                  child: Center(
+                    child: snapshot.connectionState == ConnectionState.waiting
+                        ? Scaffold(
+                            backgroundColor: Colors.black.withOpacity(0.7),
+                            body: Center(
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).primaryColor,
+                                backgroundColor:
+                                    const Color.fromRGBO(236, 180, 84, 1),
+                              ),
+                            ))
+                        : data["image"] == null
+                            ? Builder(builder: (context) {
+                                closed = true;
+                                return const SizedBox();
+                              })
                             : Container(
                                 width: MediaQuery.of(context).size.width * 0.8,
                                 decoration: BoxDecoration(
@@ -143,7 +128,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                       ],
                                     )),
                               ),
-                      ));
-                }));
+                  ));
+            });
   }
 }

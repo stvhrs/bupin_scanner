@@ -1,7 +1,9 @@
-
 import 'dart:developer';
+import 'dart:ffi';
 import 'dart:io';
 
+import 'package:Bupin/Halaman_Laporan_Error.dart';
+import 'package:Bupin/Halaman_Soal.dart';
 import 'package:Bupin/Halaman_Video.dart';
 import 'package:Bupin/models/Video.dart';
 import 'package:Bupin/styles/PageTransitionTheme.dart';
@@ -9,6 +11,7 @@ import 'package:Bupin/widgets/scann_aniamtion/scanning_effect.dart';
 import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -35,11 +38,6 @@ class _QRViewExampleState extends State<QRViewExample> {
       controller!.pauseCamera();
     }
     controller!.resumeCamera();
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
@@ -180,10 +178,12 @@ class _QRViewExampleState extends State<QRViewExample> {
     );
   }
 
-  push(Response respone) async {
+  push(Response respone, String vid) async {
     scanned = await Navigator.of(context).push(CustomRoute(
-        builder: (context) =>
-            HalamanVideo(Video.fromMap(respone.data[0]))));
+        builder: (context) => (respone.data[0]["ytId"] == null &&
+                respone.data[0]["ytidDmp"] == null)
+            ? HalamanLaporan(vid)
+            : HalamanVideo(Video.fromMap(respone.data[0]))));
   }
 
   Widget _buildQrView(BuildContext context) {
@@ -213,17 +213,66 @@ class _QRViewExampleState extends State<QRViewExample> {
     controller.resumeCamera();
     controller.scannedDataStream.listen((scanData) async {
       try {
-        result = scanData;
         if (scanned == false) {
           if (scanData.code!.contains("VID")) {
             scanned = true;
             setState(() {});
             final dio = Dio();
-            String tets=scanData.code!;
-            log(tets);
-            tets=tets.replaceAll( "buku.bupin.id/?","bupin.id/api/apibarang.php?kodeQR=");
-            final response = await dio.get(tets);
-            push(response);
+            String scanResult = scanData.code!;
+            log(scanResult);
+            scanResult = scanResult.replaceAll(
+                "buku.bupin.id/?", "bupin.id/api/apibarang.php?kodeQR=");
+            final response = await dio.get(scanResult);
+            push(
+                response,
+                scanResult.replaceAll(
+                    "https://bupin.id/api/apibarang.php?kodeQR=", ""));
+          }
+          if (scanData.code!.contains("UJN")) {
+            scanned = true;
+            setState(() {});
+
+            String scanResult = scanData.code!;
+            String jenjangCbt = "";
+
+            jenjangCbt = scanResult.replaceAll("buku.bupin.id/?", "");
+
+            int kodeTingkat = int.parse(
+                jenjangCbt[jenjangCbt.indexOf(".") + 1] +
+                    jenjangCbt[jenjangCbt.indexOf(".") + 2]);
+            log("kode" + kodeTingkat.toString());
+            String jenjang = "cbtsd";
+            if (kodeTingkat == 15 ||
+                kodeTingkat == 20 ||
+                kodeTingkat == 26 ||
+                kodeTingkat == 27 ||
+                kodeTingkat == 28) {
+              jenjang = "cbtsd";
+            } else if (kodeTingkat == 17 ||
+                kodeTingkat == 22 ||
+                kodeTingkat == 24 ||
+                kodeTingkat == 29 ||
+                kodeTingkat == 31 ||
+                kodeTingkat == 33 ||
+                kodeTingkat == 34) {
+              jenjang = "cbtsmp";
+            } else {
+              jenjang = "cbtsma";
+            }
+
+            scanResult = scanResult.replaceAll(
+                "buku.bupin.id/?", "tim.bupin.id/$jenjang/login.php?");
+            scanned = await Navigator.of(context).push(CustomRoute(
+              builder: (context) => HalamanSoal(
+                  scanResult,
+                  jenjang == "cbtsd"
+                      ? "Soal SD/MI"
+                      : jenjang == "cbtsmp"
+                          ? "Soal SMP/MI"
+                          : "Soal SMA/MA",
+                  true,
+                  jenjang),
+            ));
           }
         }
       } catch (e) {}

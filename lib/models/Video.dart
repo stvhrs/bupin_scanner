@@ -6,14 +6,10 @@ class Video {
   Video(this.ytId, this.namaVideo, this.linkVideo);
   factory Video.fromMap(Map<String, dynamic> data) {
     return Video(
-        (data["ytid"] == null)
-            ? (data["ytidDmp"] )
-            : (data["ytid"] ),
-        (data ["namaSubMateri"] == null)
+        (data["ytid"] == null) ? (data["ytidDmp"]) : (data["ytid"]),
+        (data["namaSubMateri"] == null)
             ? data["namaVideoDmp"]
             : data["namaSubMateri"],
-        ( data["linkVideo"] == null)
-            ? data["linkDmp"]
-            : data["linkVideo"]);
+        (data["linkVideo"] == null) ? data["linkDmp"] : data["linkVideo"]);
   }
 }

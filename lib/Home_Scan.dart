@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:Bupin/qr_scan.dart';
+import 'package:Bupin/Halaman_Camera.dart';
 import 'package:Bupin/styles/PageTransitionTheme.dart';
 import 'package:Bupin/widgets/scann_aniamtion/scanning_effect.dart';
 
