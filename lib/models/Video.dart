@@ -1,4 +1,4 @@
-class Video {
+class   Video {
   final String? ytId;
   final String? namaVideo;
   final String? linkVideo;

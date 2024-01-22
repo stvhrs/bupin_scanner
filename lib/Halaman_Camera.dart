@@ -1,13 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:Bupin/Halaman_Laporan_Error.dart';
-import 'package:Bupin/Halaman_Soal.dart';
-import 'package:Bupin/Halaman_Video.dart';
-import 'package:Bupin/models/Video.dart';
-import 'package:Bupin/styles/PageTransitionTheme.dart';
+import 'package:Bupin/ApiServices.dart';
 import 'package:Bupin/widgets/scann_aniamtion/scanning_effect.dart';
-import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
 
@@ -22,7 +17,7 @@ class QRViewExample extends StatefulWidget {
 }
 
 class _QRViewExampleState extends State<QRViewExample> {
-  bool scanned = false;
+  late bool scanned;
   Barcode? result;
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -36,6 +31,32 @@ class _QRViewExampleState extends State<QRViewExample> {
       controller!.pauseCamera();
     }
     controller!.resumeCamera();
+  }
+
+  void _onQRViewCreated(QRViewController controller) async {
+    setState(() {
+      this.controller = controller;
+    });
+    controller.resumeCamera();
+    controller.scannedDataStream.listen((scanData) async {
+      try {
+        if (scanned == false) {
+          if (scanData.code!.contains("VID")) {
+            setState(() {});
+            scanned = true;
+
+            scanned = await ApiService().scanQrVideo(scanData.code!, context);
+            setState(() {});
+          } else if (scanData.code!.contains("UJN")) {
+            setState(() {});
+            scanned = true;
+
+            scanned = await ApiService().scanQrCbt(scanData.code!, context);
+            setState(() {});
+          }
+        }
+      } catch (e) {}
+    });
   }
 
   @override
@@ -57,20 +78,14 @@ class _QRViewExampleState extends State<QRViewExample> {
                 children: [
                   _buildQrView(context),
                   SizedBox(
-                    width: (MediaQuery.of(context).size.height < 400)
-                        ? MediaQuery.of(context).size.width / 1.7
-                        : MediaQuery.of(context).size.width / 1.7,
-                    height: (MediaQuery.of(context).size.height < 400)
-                        ? MediaQuery.of(context).size.width / 1.7
-                        : MediaQuery.of(context).size.width / 1.7,
-                    child: ScanningEffect(
+                    width: MediaQuery.of(context).size.width / 1.7,
+                    height: MediaQuery.of(context).size.width / 1.7,
+                    child: const ScanningEffect(
                       enableBorder: false,
-                      scanningColor: const Color.fromRGBO(236, 180, 84, 1),
-                      delay: const Duration(seconds: 1),
-                      duration: const Duration(seconds: 2),
-                      child: Container(
-                        child: const SizedBox(),
-                      ),
+                      scanningColor: Color.fromRGBO(236, 180, 84, 1),
+                      delay: Duration(seconds: 1),
+                      duration: Duration(seconds: 2),
+                      child: SizedBox(),
                     ),
                   ),
                 ],
@@ -116,8 +131,9 @@ class _QRViewExampleState extends State<QRViewExample> {
                               const Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Spacer(),
-                                  Spacer(),
+                                  Spacer(
+                                    flex: 2,
+                                  ),
                                   Padding(
                                     padding: EdgeInsets.only(left: 16),
                                     child: Text(
@@ -139,10 +155,9 @@ class _QRViewExampleState extends State<QRViewExample> {
                                           fontWeight: FontWeight.w700),
                                     ),
                                   ),
-                                  Spacer(),
-                                  Spacer(),
-                                  Spacer(),
-                                  Spacer(),
+                                  Spacer(
+                                    flex: 4,
+                                  ),
                                 ],
                               ),
                               Positioned(
@@ -176,14 +191,6 @@ class _QRViewExampleState extends State<QRViewExample> {
     );
   }
 
-  push(Response respone, String vid) async {
-    scanned = await Navigator.of(context).push(CustomRoute(
-        builder: (context) => (respone.data[0]["ytId"] == null &&
-                respone.data[0]["ytidDmp"] == null)
-            ? HalamanLaporan(vid)
-            : HalamanVideo(Video.fromMap(respone.data[0]))));
-  }
-
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
     var scanArea = (MediaQuery.of(context).size.height < 400)
@@ -202,79 +209,6 @@ class _QRViewExampleState extends State<QRViewExample> {
           cutOutSize: scanArea),
       onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
     );
-  }
-
-  void _onQRViewCreated(QRViewController controller) async {
-    setState(() {
-      this.controller = controller;
-    });
-    controller.resumeCamera();
-    controller.scannedDataStream.listen((scanData) async {
-      try {
-        if (scanned == false) {
-          if (scanData.code!.contains("VID")) {
-            scanned = true;
-            setState(() {});
-            final dio = Dio();
-            String scanResult = scanData.code!;
-            log(scanResult);
-            scanResult = scanResult.replaceAll(
-                "buku.bupin.id/?", "bupin.id/api/apibarang.php?kodeQR=");
-            final response = await dio.get(scanResult);
-            push(
-                response,
-                scanResult.replaceAll(
-                    "https://bupin.id/api/apibarang.php?kodeQR=", ""));
-          }
-          if (scanData.code!.contains("UJN")) {
-            scanned = true;
-            setState(() {});
-
-            String scanResult = scanData.code!;
-            String jenjangCbt = "";
-
-            jenjangCbt = scanResult.replaceAll("buku.bupin.id/?", "");
-
-            int kodeTingkat = int.parse(
-                jenjangCbt[jenjangCbt.indexOf(".") + 1] +
-                    jenjangCbt[jenjangCbt.indexOf(".") + 2]);
-            log("kode$kodeTingkat");
-            String jenjang = "cbtsd";
-            if (kodeTingkat == 15 ||
-                kodeTingkat == 20 ||
-                kodeTingkat == 26 ||
-                kodeTingkat == 27 ||
-                kodeTingkat == 28) {
-              jenjang = "cbtsd";
-            } else if (kodeTingkat == 17 ||
-                kodeTingkat == 22 ||
-                kodeTingkat == 24 ||
-                kodeTingkat == 29 ||
-                kodeTingkat == 31 ||
-                kodeTingkat == 33 ||
-                kodeTingkat == 34) {
-              jenjang = "cbtsmp";
-            } else {
-              jenjang = "cbtsma";
-            }
-
-            scanResult = scanResult.replaceAll(
-                "buku.bupin.id/?", "tim.bupin.id/$jenjang/login.php?");
-            scanned = await Navigator.of(context).push(CustomRoute(
-              builder: (context) => HalamanSoal(
-                  scanResult,
-                  jenjang == "cbtsd"
-                      ? "Soal SD/MI"
-                      : jenjang == "cbtsmp"
-                          ? "Soal SMP/MI"
-                          : "Soal SMA/MA",
-                  true,
-                  jenjang),
-            ));
-          }
-        }
-      } catch (e) {}
-    });
   }
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {

@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:Bupin/ApiServices.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -33,24 +33,14 @@ class _HalamanBannerState extends State<HalamanBanner> {
     super.didChangeDependencies();
   }
 
-  Map<String, dynamic> data = {};
-  Future<Map<String, dynamic>> checkBanner() async {
-    try {
-      final dio = Dio();
-      final response = await dio.get("https://paling.kencang.id/api/banner/");
-      data = response.data[0];
-      return data;
-    } catch (e) {
-      return {};
-    }
-  }
 
+  
   @override
   Widget build(BuildContext context) {
     return closed == true
         ? const SizedBox()
         : FutureBuilder<Map<String, dynamic>>(
-            future: checkBanner(),
+            future: ApiService.checkBanner(),
             builder: (context, snapshot) {
               return PopScope(
                   canPop: false,
@@ -66,7 +56,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                     const Color.fromRGBO(236, 180, 84, 1),
                               ),
                             ))
-                        : data["image"] == null
+                        : snapshot.data!["image"] == null
                             ? Builder(builder: (context) {
                                 closed = true;
                                 return const SizedBox();
@@ -77,9 +67,9 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                     borderRadius: BorderRadius.circular(25)),
                                 child: GestureDetector(
                                     onTap: () {
-                                      if ((data["link"] as String).isNotEmpty) {
+                                      if ((snapshot.data!["link"] as String).isNotEmpty) {
                                         _launchInBrowser(
-                                            Uri.parse(data["link"]));
+                                            Uri.parse(snapshot.data!["link"]));
                                       }
                                     },
                                     child: Stack(
@@ -90,7 +80,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                                   stackTrace) =>
                                               Image.asset("asset/place.png"),
                                           image: NetworkImage(
-                                            data["image"],
+                                            snapshot.data!["image"],
                                           ),
                                           placeholder: const AssetImage(
                                             "asset/place.png",
@@ -100,7 +90,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                           padding: const EdgeInsets.all(0.0),
                                           child: CircleAvatar(
                                             backgroundColor:
-                                                data["dismissable"] == true
+                                                snapshot.data!["dismissable"] == true
                                                     ? Colors.white
                                                     : Colors.transparent,
                                             child: IconButton.outlined(
@@ -108,7 +98,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                                 focusColor: Colors.red,
                                                 hoverColor: Colors.red,
                                                 onPressed: () {
-                                                  if (data["dismissable"] ==
+                                                  if (snapshot.data!["dismissable"] ==
                                                       true) {
                                                     closed = true;
                                                     setState(() {});
@@ -116,7 +106,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                                 },
                                                 icon: Icon(
                                                   Icons.close,
-                                                  color: data["dismissable"] ==
+                                                  color: snapshot.data!["dismissable"] ==
                                                           true
                                                       ? Colors.red
                                                       : Colors.transparent,

@@ -16,18 +16,13 @@ class HalmanScan extends StatefulWidget {
 class _HalmanScanState extends State<HalmanScan> {
   @override
   void didChangeDependencies() {
-    precacheImage(
-        const AssetImage(
-          "asset/Halaman_Scan/Doodle Halaman Scan@4x.png",
-        ),
-        context);
-
     super.didChangeDependencies();
   }
 
   double width = 0;
   @override
-  Widget build(BuildContext context) {  log("scan");
+  Widget build(BuildContext context) {
+    log("scan");
     width = MediaQuery.of(context).size.width;
 
     return Scaffold(

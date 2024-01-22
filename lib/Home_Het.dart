@@ -1,3 +1,4 @@
+import 'package:Bupin/ApiServices.dart';
 import 'package:Bupin/models/Het.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,16 @@ import 'dart:developer';
 
 import 'package:url_launcher/url_launcher.dart';
 
-List<String> list = <String>[
+Future<void> _launchInBrowser(Uri url) async {
+  if (!await launchUrl(
+    url,
+    mode: LaunchMode.externalApplication,
+  )) {
+    throw Exception('Could not launch $url');
+  }
+}
+
+const List<String> list = <String>[
   'SD/MI  I',
   'SD/MI  II',
   'SD/MI  III',
@@ -19,7 +29,7 @@ List<String> list = <String>[
   "SMA/MA  XI",
   "SMA/MA  XII"
 ];
-List<String> list2 = <String>[
+const List<String> listKelas = <String>[
   'I',
   'II',
   'III',
@@ -44,40 +54,11 @@ class HalmanHet extends StatefulWidget {
 class _HalmanHetState extends State<HalmanHet> {
   List<Het> listHET = [];
 
-  Future<void> fetchApi() async {
-    try {
-      listHET.clear();
-      final dio = Dio();
-      int data = list.indexOf(dropdownValue);
-      final response = await dio
-          .get("https://paling.kencang.id/api/het?kelas=${list2[data]}");
-
-      if (response.statusCode == 200) {
-        for (Map<String, dynamic> element in response.data) {
-          log(element.toString());
-          listHET.add(Het.fromMap(element));
-        }
-
-        setState(() {});
-      }
-    } catch (e) {
-      log("errrorrr");
-    }
-  }
-
   @override
-  void initState() {
-    super.initState();
-    fetchApi();
-  }
-
-  Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
-      throw Exception('Could not launch $url');
-    }
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    listHET = await ApiService().fetchHet(dropdownValue);
+    setState(() {});
   }
 
   String dropdownValue = list.first;
@@ -168,12 +149,15 @@ class _HalmanHetState extends State<HalmanHet> {
                         height: 0,
                         color: Colors.transparent,
                       ),
-                      onChanged: (String? value) {
+                      onChanged: (String? value) async {
                         // This is called when the user selects an item.
 
                         dropdownValue = value!;
+
+                        listHET.clear();
                         setState(() {});
-                        fetchApi();
+                        listHET = await ApiService().fetchHet(dropdownValue);
+                        setState(() {});
                       },
                       items: list.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(

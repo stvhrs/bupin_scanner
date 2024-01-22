@@ -4,21 +4,18 @@
 
 import 'dart:developer';
 
+import 'package:Bupin/ApiServices.dart';
 import 'package:Bupin/models/Video.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import 'widgets/play_pause_button_bar.dart';
 
-
 ///
 class HalamanVideo extends StatefulWidget {
   final Video video;
 
-  const HalamanVideo(
-    this.video, {super.key}
-  );
+  const HalamanVideo(this.video, {super.key});
   @override
   _HalamanVideoState createState() => _HalamanVideoState();
 }
@@ -37,17 +34,16 @@ class _HalamanVideoState extends State<HalamanVideo>
   @override
   void dispose() {
     _controller2.dispose();
+
     super.dispose();
   }
 
   double aspectRatio = 16 / 9;
   late YoutubePlayerController _controller;
 
-
-  Future<String> fetchApi({String id = "fBDWlXs6wb4"}) async {
+  Future<void> fetchApi() async {
     _controller = YoutubePlayerController(
       params: const YoutubePlayerParams(
-          color: "blue",
           mute: false,
           showFullscreenButton: false,
           loop: false,
@@ -59,24 +55,13 @@ class _HalamanVideoState extends State<HalamanVideo>
     );
 
     _controller.loadVideo(widget.video.linkVideo!);
-final dio = Dio();
-    final response = await dio.get(
-        "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${widget.video.ytId}&key=AIzaSyDgsDwiV1qvlNa7aes8aR1KFzRSWLlP6Bw");
-    log(response.data["items"][0]["snippet"]["localized"]
-            ["description"]
-        .toString());
 
-    if ((response.data["items"][0]["snippet"]["localized"]
-            ["description"] as String)
-        .contains("ctv")) {
+    final isVertical = await ApiService.isVertical(widget.video);
+
+    if (isVertical) {
       aspectRatio = 9 / 16;
-
-    
-
-      return (response.data["items"][0]["snippet"]["localized"]
-          ["description "] as String);
     } else {
-      return _controller.metadata.title;
+      aspectRatio = 16 / 9;
     }
   }
 
@@ -87,9 +72,10 @@ final dio = Dio();
 
   @override
   Widget build(BuildContext context) {
-    
-    return PopScope(canPop: false,
-      child: FutureBuilder<String>(
+    log("Video");
+    return PopScope(
+      canPop: false,
+      child: FutureBuilder<void>(
           future: fetchApi(),
           builder: (context, snapshot) {
             return snapshot.connectionState == ConnectionState.waiting
@@ -101,12 +87,12 @@ final dio = Dio();
                       backgroundColor: const Color.fromRGBO(236, 180, 84, 1),
                     )),
                   )
-                :  YoutubePlayerScaffold(
-                      backgroundColor: Colors.black,
-                      aspectRatio: aspectRatio,
-                      controller: _controller,
-                      builder: (context, player) {
-                        return Scaffold(
+                : YoutubePlayerScaffold(
+                    backgroundColor: Colors.black,
+                    aspectRatio: aspectRatio,
+                    controller: _controller,
+                    builder: (context, player) {
+                      return Scaffold(
                           backgroundColor: Colors.white,
                           appBar: AppBar(
                             centerTitle: true,
@@ -114,6 +100,8 @@ final dio = Dio();
                               padding: const EdgeInsets.all(15.0),
                               child: GestureDetector(
                                   onTap: () {
+                                    _controller.stopVideo();
+                                    // _controller.close();
                                     Navigator.pop(context, false);
                                   },
                                   child: CircleAvatar(
@@ -133,54 +121,51 @@ final dio = Dio();
                               widget.video.namaVideo!,
                               style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 14,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w700),
                             ),
                           ),
-                          body:  LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    return Column(
-                                      children: [
-                                        Stack(alignment: Alignment.center, children: [
-                            Image.asset(
-                              "asset/logo.png",
-                              width: MediaQuery.of(context).size.width * 0.5,
-                            ),
-                            FadeTransition(
-                                opacity: _animation,
-                                child:player)]),
-                                        aspectRatio == 9 / 16
-                                            ? const SizedBox()
-                                            : Stack(
-                                                children: [
-                                                  aspectRatio == 9 / 16
-                                                      ? const SizedBox()
-                                                      : Image.asset(
-                                                          "asset/Halaman_Scan/Doodle Halaman Scan@4x.png",
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          color: Theme.of(context)
-                                                              .primaryColor,
-                                                        ),
-                                                  const Padding(
-                                                    padding:
-                                                        EdgeInsets.only(
-                                                            right: 0.0),
-                                                    child: PlayPauseButtonBar(),
+                          body: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return Column(
+                                children: [
+                                  Stack(alignment: Alignment.center, children: [
+                                    Image.asset(
+                                      "asset/logo.png",
+                                      width: MediaQuery.of(context).size.width *
+                                          0.5,
+                                    ),
+                                    FadeTransition(
+                                        opacity: _animation, child: player)
+                                  ]),
+                                  aspectRatio == 9 / 16
+                                      ? const SizedBox()
+                                      : Stack(
+                                          children: [
+                                            aspectRatio == 9 / 16
+                                                ? const SizedBox()
+                                                : Image.asset(
+                                                    "asset/Halaman_Scan/Doodle Halaman Scan@4x.png",
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
                                                   ),
-                                                ],
-                                              ),
-                                        // const VideoPositionIndicator(),
-                                      ],
-                                    );
-                                  },
-                                ));
-                         
-                        
-                      },
-                    
+                                            const Padding(
+                                              padding:
+                                                  EdgeInsets.only(right: 0.0),
+                                              child: PlayPauseButtonBar(),
+                                            ),
+                                          ],
+                                        ),
+                                  // const VideoPositionIndicator(),
+                                ],
+                              );
+                            },
+                          ));
+                    },
                   );
           }),
     );
