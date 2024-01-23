@@ -45,24 +45,24 @@ class HalamanVideoState extends State<HalamanVideo>
   String linkQrVideo = "";
   Video? video;
   bool noInternet = true;
+
   Future<void> fetchApi() async {
     final dio = Dio();
 
     linkQrVideo = widget.link
         .replaceAll("buku.bupin.id/?", "bupin.id/api/apibarang.php?kodeQR=");
     final response = await dio.get(linkQrVideo);
-   
+
     log(response.statusCode.toString());
     if (response.statusCode != 200) {
       noInternet = true;
       return;
     }
-  noInternet=false;
+    noInternet = false;
     if (response.data[0]["ytid"] == null &&
         response.data[0]["ytidDmp"] == null) {
       return;
     } else {
-     
       video = Video.fromMap(response.data[0]);
     }
     if (video != null) {
@@ -99,8 +99,18 @@ class HalamanVideoState extends State<HalamanVideo>
   @override
   Widget build(BuildContext context) {
     log("Video");
-    return PopScope(
-      canPop: false,
+    // ignore: deprecated_member_use
+    return WillPopScope(
+     onWillPop: () {
+       Navigator.pop(context, false);
+       if(  noInternet==false){
+        _controller.stopVideo();
+       }
+       return Future.value(true);
+     
+     },
+
+      
       child: FutureBuilder<void>(
           future: fetchApi(),
           builder: (context, snapshot) {
@@ -204,7 +214,6 @@ class HalamanVideoState extends State<HalamanVideo>
                                                 ),
                                               ],
                                             ),
-                                      // const VideoPositionIndicator(),
                                     ],
                                   );
                                 },
@@ -216,9 +225,7 @@ class HalamanVideoState extends State<HalamanVideo>
   }
 }
 
-///
 class Controls extends StatelessWidget {
-  ///
   const Controls({super.key});
 
   @override
@@ -228,10 +235,6 @@ class Controls extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // MetaDataSection(),
-          // _space,
-          // SourceInputSection(),
-
           PlayPauseButtonBar(),
         ],
       ),

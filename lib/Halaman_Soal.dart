@@ -69,8 +69,12 @@ class _HalamanSoalState extends State<HalamanSoal>
 
   @override
   Widget build(BuildContext context) {log("Soal");
-    return PopScope(
-      canPop: false,
+    // ignore: deprecated_member_use
+    return  WillPopScope(
+     onWillPop: () {
+       Navigator.pop(context, false);
+       return Future.value(true);
+     },
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
