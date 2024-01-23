@@ -33,8 +33,6 @@ class _HalamanBannerState extends State<HalamanBanner> {
     super.didChangeDependencies();
   }
 
-
-  
   @override
   Widget build(BuildContext context) {
     return closed == true
@@ -45,81 +43,94 @@ class _HalamanBannerState extends State<HalamanBanner> {
               return PopScope(
                   canPop: false,
                   child: Center(
-                    child: (snapshot.connectionState != ConnectionState.done ||
-                            snapshot.data!.isEmpty)
-                        ? Scaffold(
-                            backgroundColor: Colors.black.withOpacity(0.7),
-                            body: Center(
-                              child: CircularProgressIndicator(
-                                color: Theme.of(context).primaryColor,
-                                backgroundColor:
-                                    const Color.fromRGBO(236, 180, 84, 1),
-                              ),
-                            ))
-                        : snapshot.data!["image"] == null
-                            ? Builder(builder: (context) {
-                                closed = true;
-                                return const SizedBox();
-                              })
-                            : Scaffold(
-                            backgroundColor: Colors.black.withOpacity(0.7),
-                            body: Center(
-                              child:Container(
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(25)),
-                                child: GestureDetector(
-                                    onTap: () {
-                                      if ((snapshot.data!["link"] as String).isNotEmpty) {
-                                        _launchInBrowser(
-                                            Uri.parse(snapshot.data!["link"]));
-                                      }
-                                    },
-                                    child: Stack(
-                                      alignment: Alignment.topRight,
-                                      children: [
-                                        FadeInImage(
-                                          imageErrorBuilder: (context, error,
-                                                  stackTrace) =>
-                                              Image.asset("asset/place.png"),
-                                          image: NetworkImage(
-                                            snapshot.data!["image"],
-                                          ),
-                                          placeholder: const AssetImage(
-                                            "asset/place.png",
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(0.0),
-                                          child: CircleAvatar(
-                                            backgroundColor:
-                                                snapshot.data!["dismissable"] == true
-                                                    ? Colors.white
-                                                    : Colors.transparent,
-                                            child: IconButton(
-                                                color: Colors.red,
-                                                focusColor: Colors.red,
-                                                hoverColor: Colors.red,
-                                                onPressed: () {
-                                                  if (snapshot.data!["dismissable"] ==
-                                                      true) {
-                                                    closed = true;
-                                                    setState(() {});
-                                                  }
-                                                },
-                                                icon: Icon(
-                                                  Icons.close,
-                                                  color: snapshot.data!["dismissable"] ==
+                      child: (snapshot.connectionState !=
+                                  ConnectionState.done ||
+                              snapshot.data!.isEmpty)
+                          ? Scaffold(
+                              backgroundColor: Colors.black.withOpacity(0.7),
+                              body: Center(
+                                child: CircularProgressIndicator(
+                                  color: Theme.of(context).primaryColor,
+                                  backgroundColor:
+                                      const Color.fromRGBO(236, 180, 84, 1),
+                                ),
+                              ))
+                          : snapshot.data!["image"] == null
+                              ? Builder(builder: (context) {
+                                  closed = true;
+                                  return const SizedBox();
+                                })
+                              : Scaffold(
+                                  backgroundColor:
+                                      Colors.black.withOpacity(0.7),
+                                  body: Center(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                      child: GestureDetector(
+                                          onTap: () {
+                                            if ((snapshot.data!["link"]
+                                                    as String)
+                                                .isNotEmpty) {
+                                              _launchInBrowser(Uri.parse(
+                                                  snapshot.data!["link"]));
+                                            }
+                                          },
+                                          child: Stack(
+                                            alignment: Alignment.topRight,
+                                            children: [
+                                              FadeInImage(
+                                                imageErrorBuilder: (context,
+                                                        error, stackTrace) =>
+                                                    Image.asset(
+                                                        "asset/place.png"),
+                                                image: NetworkImage(
+                                                  snapshot.data!["image"],
+                                                ),
+                                                placeholder: const AssetImage(
+                                                  "asset/place.png",
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(0.0),
+                                                child: CircleAvatar(
+                                                  backgroundColor: snapshot
+                                                                  .data![
+                                                              "dismissable"] ==
                                                           true
-                                                      ? Colors.red
+                                                      ? Colors.white
                                                       : Colors.transparent,
-                                                )),
-                                          ),
-                                        )
-                                      ],
-                                    )),
-                              ),
-                  ))));
+                                                  child: IconButton(
+                                                      color: Colors.red,
+                                                      focusColor: Colors.red,
+                                                      hoverColor: Colors.red,
+                                                      onPressed: () {
+                                                        if (snapshot.data![
+                                                                "dismissable"] ==
+                                                            true) {
+                                                          closed = true;
+                                                          setState(() {});
+                                                        }
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.close,
+                                                        color: snapshot.data![
+                                                                    "dismissable"] ==
+                                                                true
+                                                            ? Colors.red
+                                                            : Colors
+                                                                .transparent,
+                                                      )),
+                                                ),
+                                              )
+                                            ],
+                                          )),
+                                    ),
+                                  ))));
             });
   }
 }

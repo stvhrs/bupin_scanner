@@ -5,7 +5,9 @@
 import 'dart:developer';
 
 import 'package:Bupin/ApiServices.dart';
+import 'package:Bupin/Halaman_Laporan_Error.dart';
 import 'package:Bupin/models/Video.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
@@ -13,9 +15,9 @@ import 'widgets/play_pause_button_bar.dart';
 
 ///
 class HalamanVideo extends StatefulWidget {
-  final Video video;
+  final String link;
 
-  const HalamanVideo(this.video, {super.key});
+  const HalamanVideo(this.link, {super.key});
   @override
   HalamanVideoState createState() => HalamanVideoState();
 }
@@ -40,28 +42,52 @@ class HalamanVideoState extends State<HalamanVideo>
 
   double aspectRatio = 16 / 9;
   late YoutubePlayerController _controller;
-
+  String linkQrVideo = "";
+  Video? video;
+  bool noInternet = true;
   Future<void> fetchApi() async {
-    _controller = YoutubePlayerController(
-      params: const YoutubePlayerParams(
-          mute: false,
-          showFullscreenButton: false,
-          loop: false,
-          strictRelatedVideos: true),
-    );
+    final dio = Dio();
 
-    _controller.setFullScreenListener(
-      (isFullScreen) {},
-    );
-
-    _controller.loadVideo(widget.video.linkVideo!);
-
-    final isVertical = await ApiService.isVertical(widget.video);
-
-    if (isVertical) {
-      aspectRatio = 9 / 16;
+    linkQrVideo = widget.link
+        .replaceAll("buku.bupin.id/?", "bupin.id/api/apibarang.php?kodeQR=");
+    final response = await dio.get(linkQrVideo);
+   
+    log(response.statusCode.toString());
+    if (response.statusCode != 200) {
+      noInternet = true;
+      return;
+    }
+  noInternet=false;
+    if (response.data[0]["ytid"] == null &&
+        response.data[0]["ytidDmp"] == null) {
+      return;
     } else {
-      aspectRatio = 16 / 9;
+     
+      video = Video.fromMap(response.data[0]);
+    }
+    if (video != null) {
+      _controller = YoutubePlayerController(
+        params: const YoutubePlayerParams(
+            mute: false,
+            showFullscreenButton: false,
+            color: "red",
+            loop: false,
+            strictRelatedVideos: true),
+      );
+
+      _controller.setFullScreenListener(
+        (isFullScreen) {},
+      );
+
+      _controller.loadVideo(video!.linkVideo!);
+
+      final isVertical = await ApiService.isVertical(video!);
+
+      if (isVertical) {
+        aspectRatio = 9 / 16;
+      } else {
+        aspectRatio = 16 / 9;
+      }
     }
   }
 
@@ -78,8 +104,13 @@ class HalamanVideoState extends State<HalamanVideo>
       child: FutureBuilder<void>(
           future: fetchApi(),
           builder: (context, snapshot) {
-            return snapshot.connectionState == ConnectionState.waiting
+            return (noInternet == true)
                 ? Scaffold(
+                    appBar: AppBar(
+                      centerTitle: true,
+                      automaticallyImplyLeading: false,
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
                     backgroundColor: Colors.white,
                     body: Center(
                         child: CircularProgressIndicator(
@@ -87,86 +118,99 @@ class HalamanVideoState extends State<HalamanVideo>
                       backgroundColor: const Color.fromRGBO(236, 180, 84, 1),
                     )),
                   )
-                : YoutubePlayerScaffold(
-                    backgroundColor: Colors.black,
-                    aspectRatio: aspectRatio,
-                    controller: _controller,
-                    builder: (context, player) {
-                      return Scaffold(
-                          backgroundColor: Colors.white,
-                          appBar: AppBar(
-                            centerTitle: true,
-                            leading: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: GestureDetector(
-                                  onTap: () {
-                                    _controller.stopVideo();
-                                    // _controller.close();
-                                    Navigator.pop(context, false);
-                                  },
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.arrow_back_rounded,
-                                        color: Theme.of(context).primaryColor,
-                                        size: 15,
-                                        weight: 100,
-                                      ),
-                                    ),
-                                  )),
-                            ),
-                            backgroundColor: Theme.of(context).primaryColor,
-                            title: Text(
-                              widget.video.namaVideo!,
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          body: LayoutBuilder(
-                            builder: (context, constraints) {
-                              return Column(
-                                children: [
-                                  Stack(alignment: Alignment.center, children: [
-                                    Image.asset(
-                                      "asset/logo.png",
-                                      width: MediaQuery.of(context).size.width *
-                                          0.5,
-                                    ),
-                                    FadeTransition(
-                                        opacity: _animation, child: player)
-                                  ]),
-                                  aspectRatio == 9 / 16
-                                      ? const SizedBox()
-                                      : Stack(
+                : video == null
+                    ? HalamanLaporan(
+                        linkQrVideo.replaceAll(
+                          "https://bupin.id/api/apibarang.php?kodeQR=",
+                          "",
+                        ),
+                      )
+                    : YoutubePlayerScaffold(
+                        backgroundColor: Colors.black,
+                        aspectRatio: aspectRatio,
+                        controller: _controller,
+                        builder: (context, player) {
+                          return Scaffold(
+                              backgroundColor: Colors.white,
+                              appBar: AppBar(
+                                centerTitle: true,
+                                leading: Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: GestureDetector(
+                                      onTap: () {
+                                        _controller.stopVideo();
+                                        // _controller.close();
+                                        Navigator.pop(context, false);
+                                      },
+                                      child: CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.arrow_back_rounded,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            size: 15,
+                                            weight: 100,
+                                          ),
+                                        ),
+                                      )),
+                                ),
+                                backgroundColor: Theme.of(context).primaryColor,
+                                title: Text(
+                                  video!.namaVideo!,
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              body: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  return Column(
+                                    children: [
+                                      Stack(
+                                          alignment: Alignment.center,
                                           children: [
-                                            aspectRatio == 9 / 16
-                                                ? const SizedBox()
-                                                : Image.asset(
-                                                    "asset/Halaman_Scan/Doodle Halaman Scan@4x.png",
-                                                    width:
-                                                        MediaQuery.of(context)
+                                            Image.asset(
+                                              "asset/logo.png",
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.5,
+                                            ),
+                                            FadeTransition(
+                                                opacity: _animation,
+                                                child: player)
+                                          ]),
+                                      aspectRatio == 9 / 16
+                                          ? const SizedBox()
+                                          : Stack(
+                                              children: [
+                                                aspectRatio == 9 / 16
+                                                    ? const SizedBox()
+                                                    : Image.asset(
+                                                        "asset/Halaman_Scan/Doodle Halaman Scan@4x.png",
+                                                        width: MediaQuery.of(
+                                                                context)
                                                             .size
                                                             .width,
-                                                    color: Theme.of(context)
-                                                        .primaryColor,
-                                                  ),
-                                            const Padding(
-                                              padding:
-                                                  EdgeInsets.only(right: 0.0),
-                                              child: PlayPauseButtonBar(),
+                                                        color: Theme.of(context)
+                                                            .primaryColor,
+                                                      ),
+                                                const Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right: 0.0),
+                                                  child: PlayPauseButtonBar(),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                  // const VideoPositionIndicator(),
-                                ],
-                              );
-                            },
-                          ));
-                    },
-                  );
+                                      // const VideoPositionIndicator(),
+                                    ],
+                                  );
+                                },
+                              ));
+                        },
+                      );
           }),
     );
   }
@@ -184,8 +228,6 @@ class Controls extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          VideoPositionSeeker(),
-
           // MetaDataSection(),
           // _space,
           // SourceInputSection(),
@@ -195,71 +237,7 @@ class Controls extends StatelessWidget {
       ),
     );
   }
-
 }
 
 ///
-class VideoPositionIndicator extends StatelessWidget {
-  ///
-  const VideoPositionIndicator({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final controller = context.ytController;
-
-    return StreamBuilder<YoutubeVideoState>(
-      stream: controller.videoStateStream,
-      initialData: const YoutubeVideoState(),
-      builder: (context, snapshot) {
-        final position = snapshot.data?.position.inMilliseconds ?? 0;
-        final duration = controller.metadata.duration.inMilliseconds;
-
-        return LinearProgressIndicator(
-          value: duration == 0 ? 0 : position / duration,
-          minHeight: 1,
-        );
-      },
-    );
-  }
-}
-
-///
-class VideoPositionSeeker extends StatelessWidget {
-  ///
-  const VideoPositionSeeker({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    var value = 0.0;
-
-    return StreamBuilder<YoutubeVideoState>(
-      stream: context.ytController.videoStateStream,
-      initialData: const YoutubeVideoState(),
-      builder: (context, snapshot) {
-        final position = snapshot.data?.position.inSeconds ?? 0;
-        final duration = context.ytController.metadata.duration.inSeconds;
-
-        value = position == 0 || duration == 0 ? 0 : position / duration;
-
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Slider(
-              value: value,
-              onChanged: (positionFraction) {
-                value = positionFraction;
-                setState(() {});
-
-                context.ytController.seekTo(
-                  seconds: (value * duration).toDouble(),
-                  allowSeekAhead: true,
-                );
-              },
-              min: 0,
-              max: 1,
-            );
-          },
-        );
-      },
-    );
-  }
-}

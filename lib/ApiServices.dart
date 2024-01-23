@@ -1,4 +1,3 @@
-
 import 'package:Bupin/Halaman_Laporan_Error.dart';
 import 'package:Bupin/Halaman_Soal.dart';
 import 'package:Bupin/Halaman_Video.dart';
@@ -86,12 +85,10 @@ class ApiService {
   }
 
   Future<bool> pushToVideo(
-    Response data, String vid, BuildContext context) async {
+       String link, BuildContext context) async {
     return await Navigator.of(context).push(CustomRoute(
         builder: (context) =>
-            (data.data[0]["ytid"] == null && data.data[0]["ytidDmp"] == null)
-                ? HalamanLaporan(vid)
-                : HalamanVideo(Video.fromMap(data.data[0]))));
+            HalamanVideo(link),));
   }
 
   Future<bool> pushToCbt(
@@ -142,17 +139,7 @@ class ApiService {
   }
 
   Future<bool> scanQrVideo(String link, BuildContext context) async {
-    final dio = Dio();
-
-    link = link.replaceAll(
-        "buku.bupin.id/?", "bupin.id/api/apibarang.php?kodeQR=");
-    final response = await dio.get(link);
-    return await pushToVideo(
-        response,
-        link.replaceAll(
-          "https://bupin.id/api/apibarang.php?kodeQR=",
-          "",
-        ),
-        context);
+  
+    return await pushToVideo( link, context);
   }
 }
