@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:Bupin/Halaman_Soal.dart';
 import 'package:Bupin/Halaman_Video.dart';
 import 'package:Bupin/models/Het.dart';
@@ -55,6 +57,24 @@ class ApiService {
       }
     } catch (e) {
       return [];
+    }
+  } Future<String> fetchCs() async {
+    try {
+    
+      final dio = Dio();
+     
+      final response = await dio
+          .get("https://paling.kencang.id/api/cs/");
+
+      if (response.statusCode == 200) {
+    return  response.data[0]["num"]
+;
+       
+      } else {
+        return "6282171685885";
+      }
+    } catch (e) {
+     return "6282171685885";
     }
   }
 
@@ -114,6 +134,7 @@ class ApiService {
         jenjangCbt[jenjangCbt.indexOf(".") + 2]);
 
     String jenjang = "cbtsd";
+
     if (kodeTingkat == 15 ||
         kodeTingkat == 20 ||
         kodeTingkat == 26 ||
@@ -132,8 +153,21 @@ class ApiService {
       jenjang = "cbtsma";
     }
 
-    link =
-        link.replaceAll("buku.bupin.id/?", "tim.bupin.id/$jenjang/login.php?");
+    int? ujianId;
+
+    List<String> parts = link.split("-");
+  
+    if (parts.length >= 2) {
+      String numberString = parts[1];
+
+      ujianId = int.tryParse(numberString) ?? 0;
+
+      log("The extracted number is: $ujianId");
+    } else {
+      log("Pattern not found in the URL.");
+    }
+
+    link = "https://tim.bupin.id/$jenjang/login.php?$ujianId";
     return await pushToCbt(link, jenjang, context);
   }
 

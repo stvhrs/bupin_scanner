@@ -43,6 +43,7 @@ dependencies:
 
   webview_flutter: ^4.4.4
   dio: ^5.4.0
+  onesignal_flutter: ^5.0.4
  
 
 dev_dependencies:

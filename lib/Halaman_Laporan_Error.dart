@@ -1,14 +1,16 @@
+import 'package:Bupin/ApiServices.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HalamanLaporan extends StatelessWidget {
   final String id;
   const HalamanLaporan(this.id, {super.key});
-  Future<void> _launchInBrowser() async {
+  Future<void> _launchInBrowser(String num) async {
     if (!await launchUrl(
       // phone=6285174484832&text=Halo+Saya+Ada+Kode+Error+%3A%0A%2AVID222333%2A&type=phone_number&app_absent=0
       Uri.parse(
-          "https://api.whatsapp.com/send/?phone=6282323910088&text=Saya+Menemukan+Kode%20QR+yang+error+berikut+kodenya+%3A%0A%2A$id%2A&type=phone_number&app_absent=0 "),
+          "https://api.whatsapp.com/send/?phone=$num&text=Saya+Menemukan+Kode%20QR+yang+error+berikut+kodenya+%3A%0A%2A$id%2A&type=phone_number&app_absent=0 "),
       mode: LaunchMode.externalApplication,
     )) {
       throw Exception('Could not launch ');
@@ -77,17 +79,22 @@ class HalamanLaporan extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green)),
-                onPressed: () {
-                  _launchInBrowser();
-                },
-                child: const Text(
-                  "Laporkan ke Whatsapp CS Kami ",
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(color: Colors.white),
-                )),
+            FutureBuilder(
+              future: ApiService().fetchCs(),
+              builder: (context, snapshot) {
+                return ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.green)),
+                    onPressed:snapshot.connectionState==ConnectionState.waiting?null: () {
+                      _launchInBrowser(snapshot.data!);
+                    },
+                    child: const Text(
+                      "Laporkan ke Whatsapp CS Kami ",
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(color: Colors.white),
+                    ));
+              }
+            ),
             const Spacer(
               flex: 7,
             ),

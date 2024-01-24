@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:Bupin/ApiServices.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -40,6 +42,7 @@ class _HalamanBannerState extends State<HalamanBanner> {
         : FutureBuilder<Map<String, dynamic>>(
             future: ApiService.checkBanner(),
             builder: (context, snapshot) {
+              log("banner");
               return PopScope(
                   canPop: false,
                   child: Center(

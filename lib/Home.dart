@@ -70,7 +70,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                             onTap: () {
                               Navigator.of(context).push(CustomRoute(
                                 builder: (context) => const HalamanSoal(
-                                    "https://tim.bupin.id/cbstakm/login.php?6666",
+                                    "https://tim.bupin.id/cbtakm/login.php?6666",
                                     "Bank Soal SD/MI",
                                     false,
                                     ""),
