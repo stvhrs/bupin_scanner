@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:Bupin/ApiServices.dart';
+import 'package:Bupin/WebivewPolos.dart';
+import 'package:Bupin/styles/PageTransitionTheme.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -78,8 +80,17 @@ class _HalamanBannerState extends State<HalamanBanner> {
                                             if ((snapshot.data!["link"]
                                                     as String)
                                                 .isNotEmpty) {
-                                              _launchInBrowser(Uri.parse(
-                                                  snapshot.data!["link"]));
+                                              if (snapshot.data!["external"]==true) {
+                                                _launchInBrowser(Uri.parse(
+                                                    snapshot.data!["link"]));
+                                              } else {
+                                                Navigator.of(context)
+                                                    .push(CustomRoute(
+                                                  builder: (context) =>
+                                                      HalamanWebview(snapshot
+                                                          .data!["link"]),
+                                                ));
+                                              }
                                             }
                                           },
                                           child: Stack(
