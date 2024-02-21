@@ -58,23 +58,21 @@ class ApiService {
     } catch (e) {
       return [];
     }
-  } Future<String> fetchCs() async {
+  }
+
+  Future<String> fetchCs() async {
     try {
-    
       final dio = Dio();
-     
-      final response = await dio
-          .get("https://paling.kencang.id/api/cs/");
+
+      final response = await dio.get("https://paling.kencang.id/api/cs/");
 
       if (response.statusCode == 200) {
-    return  response.data[0]["num"]
-;
-       
+        return response.data[0]["num"];
       } else {
         return "6282171685885";
       }
     } catch (e) {
-     return "6282171685885";
+      return "6282171685885";
     }
   }
 
@@ -103,11 +101,10 @@ class ApiService {
     }
   }
 
-  Future<bool> pushToVideo(
-       String link, BuildContext context) async {
+  Future<bool> pushToVideo(String link, BuildContext context) async {
     return await Navigator.of(context).push(CustomRoute(
-        builder: (context) =>
-            HalamanVideo(link),));
+      builder: (context) => HalamanVideo(link),
+    ));
   }
 
   Future<bool> pushToCbt(
@@ -156,23 +153,18 @@ class ApiService {
     int? ujianId;
 
     List<String> parts = link.split("-");
-  
+
     if (parts.length >= 2) {
       String numberString = parts[1];
 
       ujianId = int.tryParse(numberString) ?? 0;
-
-      log("The extracted number is: $ujianId");
-    } else {
-      log("Pattern not found in the URL.");
-    }
+    } else {}
 
     link = "https://tim.bupin.id/$jenjang/login.php?$ujianId";
     return await pushToCbt(link, jenjang, context);
   }
 
   Future<bool> scanQrVideo(String link, BuildContext context) async {
-  
-    return await pushToVideo( link, context);
+    return await pushToVideo(link, context);
   }
 }

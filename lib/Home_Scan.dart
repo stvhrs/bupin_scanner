@@ -43,7 +43,9 @@ class _HalmanScanState extends State<HalmanScan> {
                 width: width)),
         Positioned(
             bottom: 0,
-            child: Image.asset("asset/Halaman_Scan/Manusia.png", width: width)),
+            child:   Image.asset("asset/Halaman_Scan/Manusia (6).png",
+                  width: width * 0.8),
+            ),
         Positioned(
             top: 50,
             child: Image.asset(
@@ -69,7 +71,7 @@ class _HalmanScanState extends State<HalmanScan> {
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
                         fontSize: 50)),
-                Text("Scan dengan tekan tombol ini",
+                Text("Tekan tombol dibawah ini",
                     style: TextStyle(
                         fontWeight: FontWeight.w700,
                         color: Color.fromRGBO(236, 180, 84, 1),

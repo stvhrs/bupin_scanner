@@ -54,7 +54,7 @@ class _HalmanHetState extends State<HalmanHet> {
 
       if (response.statusCode == 200) {
         for (Map<String, dynamic> element in response.data) {
-          log(element.toString());
+        
           listHET.add(Het.fromMap(element));
         }
 
